@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import collections
 from mxnet import nd, gluon, init, autograd
 from mxnet.gluon import nn, data as gdata, loss as gloss
@@ -15,11 +14,15 @@ train_data_labels = pd.read_csv(train_file)
 test_data = pd.read_csv(test_file)
 test_label = pd.read_csv(test_label_file)
 
-labels_name = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate', 'N']
-labels_index = list(range(1, 8))
+# labels_name = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate', 'N']
+# labels_index = list(range(1, 8))
 
-# train_data_labels = pd.concat((train_data_labels, pd.DataFrame(data=np.zeros((len(train_data_labels), 1)), columns=['N'])), axis=1)
+# train_data_labels = pd.concat((train_data_labels, \
+#                     pd.DataFrame(data=np.zeros((len(train_data_labels), 1)), columns=['N'])), axis=1)
 # train_data_labels['N'][train_data_labels[labels_name[:-1]].apply(sum, axis=1) == 0] = 1
+
+labels_name = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
+labels_index = list(range(1, 7))
 
 train_data = train_data_labels[['id', 'comment_text']]
 train_test_data = pd.concat((train_data, test_data), axis=0)  # 将训练数据与预测数据进行拼接一起形成单词表
@@ -65,9 +68,9 @@ for i in labels_index[:-1]:
 
 batch_size = 200
 
-for i in labels_index[:-1]:
+for i in labels_index:
     in_vars['train_set_{0}'.format(i)] = gdata.ArrayDataset(train_features, in_vars['train_label_{0}'.format(i)])
-    in_vars['train_iter_{0}'.format(i)] = gdata.DataLoader(in_vars['train_set_{0}'.format(i)], batch_size)
+    in_vars['train_iter_{0}'.format(i)] = gdata.DataLoader(in_vars['train_set_{0}'.format(i)], batch_size, shuffle=True)
 
 # 开始设计神经网络模型。本问题中，虽然看似六分类问题，实质上是正对每一个分类的二分类问题。现就针对每一个分类按照二分类问题进行网络构建。
 # 考虑参考textCNN思路构建网络
@@ -99,7 +102,7 @@ class TextCNN(nn.HybridBlock):
 w2v_size, k_sizes, n_channels = 10, [3, 4, 5], [10, 10, 10]
 lr, wd, num_epochs = 0.005, 0, 5
 
-for i in labels_index[:-1]:
+for i in labels_index:
     in_vars['net_{0}'.format(i)] = TextCNN(voc, w2v_size=w2v_size, k_sizes=k_sizes, n_channels=n_channels)
     net = in_vars['net_{0}'.format(i)]
     net.initialize(init.Xavier())
@@ -124,3 +127,8 @@ for i in labels_index[:-1]:
             print(count)
             count += 1
     print('train_iter_{0}  loss {1}, train_acc {2}'.format(i, train_l_sum / n, train_acc_sum / n))
+
+for i in labels_index:
+    filename = './models_params_file/model_params_{0}'.format(labels_name[i-1])
+    net = in_vars['net_{0}'.format(i)]
+    net.save_parameters(filename)
