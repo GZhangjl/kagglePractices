@@ -111,7 +111,7 @@ for i in labels_index:
     net.hybridize()
     trainer = gluon.Trainer(net.collect_params(), 'adam', {'learning_rate': lr, 'wd': wd})
     loss = gloss.SoftmaxCrossEntropyLoss()
-
+    # count = 0
     labels = in_vars['train_label_{0}'.format(i)]
     train_iter = in_vars['train_iter_{0}'.format(i)]
     train_l_sum, train_acc_sum, n = 0., 0., 0.
@@ -125,6 +125,8 @@ for i in labels_index:
             train_l_sum += l.asscalar()
             train_acc_sum += (y_hat.argmax(axis=1) == y.astype('float32')).sum().asscalar()
             n += y.size
+            # print(count)
+            # count += 1
     print('train_iter_{0}  loss {1}, train_acc {2}'.format(i, train_l_sum / n, train_acc_sum / n))
 
 for i in labels_index:
