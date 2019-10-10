@@ -1,6 +1,6 @@
 https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge
 
-文件夹中`jigsaw-toxic-comment-classification-challenge`为源数据；以`.ipynb`后缀的两个文件为调试用的notebook，分步的结果在notebook中试验；以`.py`后缀的两个文件顾名思义为Python文件，一个为训练模型代码。一个为测试模型代码；`models_params_file`文件夹保存了训练模型后得到的参数，以便于在测试时使用。
+文件夹中`jigsaw-toxic-comment-classification-challenge`为源数据；以`.ipynb`后缀的两个文件为调试用的notebook，分步的结果在notebook中试验；以`.py`后缀的两个文件顾名思义为Python文件，一个为训练模型代码。一个为测试模型代码；`models_params_file`文件夹保存了训练模型后得到的参数，以便于在测试时使用。`submission.csv` 文件为Kaggle网站要求的提交文件，里面数据为模型对测试用例的测试结果。
 
 模型整体参考了TextCNN的构建思路。将卷积神经网络用于NLP中。
 #### 首次训练已完成，正待检验以及改善。 -- 2019/10/10
