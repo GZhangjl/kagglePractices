@@ -2,3 +2,4 @@
 /workspace.xml
 .idea/
 .ipynb_checkpoints/
+/toxic-comment-classification-challenge/model_results/
